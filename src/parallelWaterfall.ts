@@ -37,10 +37,11 @@ export const parallelWaterfall = async (
       let res = batch;
       for (let i = 0; i < tasks.length; ++i) {
         const options = tasksOptions[i];
-        if (errored && options.cancellable) return null;
         const semaphore = semaphores[i];
         try {
+          if (errored && options.cancellable) return null;
           await semaphore.acquire();
+          if (errored && options.cancellable) return null;
           res = await tasks[i](res);
         } catch (err) {
           errored = true;
