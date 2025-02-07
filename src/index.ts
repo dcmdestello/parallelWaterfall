@@ -1,3 +1,5 @@
-import * as tests from './tests';
+import * as examples from './examples';
 
-tests.test3();
+examples.example1();
+// examples.example2();
+// examples.example3();

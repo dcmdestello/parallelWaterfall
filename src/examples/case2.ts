@@ -6,32 +6,30 @@ const forn = (n: number, cb: (i: number) => void) => {
   }
 };
 
-const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const delay = (ms) => new Promise((r) => setTimeout(r, ms));
 
 let startT = null;
 
-const genTask = (id: string | number, ms = 1000, throws = false) => async (
-  data: any
-) => {
+let c = 0;
+const genTask = (id, ms = 1000) => async (data: any) => {
   if (!startT) startT = Date.now();
   const delta = Math.round((Date.now() - startT) / 1000);
   const name = 'task' + id;
   console.log(delta + 's: starting', name, data);
   await delay(ms);
-  if (throws) throw new Error(name + ' error with ' + data);
+  if (id === 2) c++;
+  if (id === 2 && c === 2) throw new Error('task 2 error' + data);
   return data.map((s) => s + '-' + name);
 };
 
-const N = 4;
+const N = 5;
 const T = 4;
 const K = 1;
 
 const data = [];
 forn(N, (i) => data.push('data' + i));
 const tasks = [];
-forn(T - 2, (i) => tasks.push(genTask(i, 1000 * (i + 1))));
-tasks.push({ task: genTask(T - 2), options: { cancellable: false } });
-tasks.push({ task: genTask(T - 1, 1000, true) });
+forn(T, (i) => tasks.push(genTask(i, 1000 * (i + 1))));
 
 const breakArr = (arr: any[], size: number) => {
   const res = [];
@@ -43,7 +41,7 @@ const breakArr = (arr: any[], size: number) => {
   return res;
 };
 
-export const test = async () => {
+export const example = async () => {
   const batchedInput = breakArr(data, K);
   try {
     const res = await parallelWaterfall(batchedInput, tasks);

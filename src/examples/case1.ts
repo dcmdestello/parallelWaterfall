@@ -38,7 +38,7 @@ const breakArr = (arr: any[], size: number) => {
   return res;
 };
 
-export const test = async () => {
+export const example = async () => {
   const batchedInput = breakArr(data, K);
   try {
     const res = await parallelWaterfall(batchedInput, tasks);
