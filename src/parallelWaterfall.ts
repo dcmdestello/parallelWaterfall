@@ -16,15 +16,15 @@ const defaultTaskOptions: Options = {
 };
 
 export const parallelWaterfall = async (
-  arrays: any[],
+  inputItems: any[],
   tasksArg: ConfigurableTask[],
-  allOptions: Options = defaultTaskOptions
+  globalOptions: Options = defaultTaskOptions
 ) => {
   const tasks = tasksArg.map((ct) => (typeof ct === 'object' ? ct.task : ct));
   const tasksOptions = tasksArg.map((ct) =>
     typeof ct === 'object'
       ? { ...defaultTaskOptions, ...ct.options }
-      : { ...defaultTaskOptions, ...allOptions }
+      : { ...defaultTaskOptions, ...globalOptions }
   );
 
   const semaphores = tasks.map(
@@ -33,7 +33,7 @@ export const parallelWaterfall = async (
 
   let errored = false;
   const lanes = await Promise.all(
-    arrays.map(async (batch) => {
+    inputItems.map(async (batch) => {
       let res = batch;
       for (let i = 0; i < tasks.length; ++i) {
         const options = tasksOptions[i];
